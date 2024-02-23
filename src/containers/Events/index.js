@@ -14,8 +14,9 @@ const EventList = () => {
   const [type, setType] = useState();
   const [currentPage, setCurrentPage] = useState(1);
   const filteredEvents = (
-    (!type
-      ? data?.events
+    // changement et ajout du filtre ligne 19
+    (type
+      ? data?.events.filter(event => event.type === type)
       : data?.events) || []
   ).filter((event, index) => {
     if (
@@ -26,12 +27,15 @@ const EventList = () => {
     }
     return false;
   });
+
   const changeType = (evtType) => {
     setCurrentPage(1);
     setType(evtType);
   };
-  const pageNumber = Math.floor((filteredEvents?.length || 0) / PER_PAGE) + 1;
+
+  const pageNumber = Math.floor((filteredEvents?.length || 0) / PER_PAGE +1);
   const typeList = new Set(data?.events.map((event) => event.type));
+
   return (
     <>
       {error && <div>An error occured</div>}
@@ -44,6 +48,7 @@ const EventList = () => {
             selection={Array.from(typeList)}
             onChange={(value) => (value ? changeType(value) : changeType(null))}
           />
+
           <div id="events" className="ListContainer">
             {filteredEvents.map((event) => (
               <Modal key={event.id} Content={<ModalEvent event={event} />}>
@@ -59,6 +64,7 @@ const EventList = () => {
               </Modal>
             ))}
           </div>
+          
           <div className="Pagination">
             {[...Array(pageNumber || 0)].map((_, n) => (
               // eslint-disable-next-line react/no-array-index-key

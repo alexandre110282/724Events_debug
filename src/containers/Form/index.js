@@ -16,6 +16,8 @@ const Form = ({ onSuccess, onError }) => {
       try {
         await mockContactApi();
         setSending(false);
+        // Appel de la fonction OnSuccess pour afficher la Modal "Message Envoyé"
+         onSuccess();
       } catch (err) {
         setSending(false);
         onError(err);

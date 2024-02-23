@@ -8,22 +8,20 @@ const Slider = () => {
   const { data } = useData();
   const [index, setIndex] = useState(0);
   const byDateDesc = data?.focus.sort((evtA, evtB) =>
-    new Date(evtA.date) < new Date(evtB.date) ? -1 : 1
+  // Changement de l'opérateur '<' vers '>'  pour un ordre décroissant
+    new Date(evtA.date) > new Date(evtB.date) ? -1 : 1
   );
-  
- // Fonction pour passer à la carte suivante
   const nextCard = () => {
-    setIndex(prevIndex => (prevIndex < byDateDesc.length - 1 ? prevIndex + 1 : 0));
+    // Vérifie si l'index actuel est inférieur au nombre total d'éléments moins un
+   // Si c'est le cas, incrémente l'index de 1, sinon revient à 0
+    setTimeout(
+      () => setIndex(index < byDateDesc.length - 1 ? index + 1 : 0),
+      5000
+    );
   };
-
-  // Utilisation de useEffect pour démarrer un intervalle de 5 secondes pour le changement automatique de carte
   useEffect(() => {
-    const intervalId = setInterval(nextCard, 5000); // Démarre un intervalle qui appelle nextCard toutes les 5 secondes
-
-    // Fonction de retour de useEffect pour nettoyer l'intervalle lorsque le composant est démonté ou lorsque l'index change
-    return () => clearInterval(intervalId); // Nettoie l'intervalle pour éviter les fuites de mémoire
-  }, []); // Utilisation d'un tableau de dépendances vide pour que l'effet ne se déclenche qu'une seule fois à l'initialisation du composant
-
+    nextCard();
+  });
   return (
     <div className="SlideCardList">
       {byDateDesc?.map((event, idx) => (
@@ -45,12 +43,14 @@ const Slider = () => {
           </div>
           <div className="SlideCard__paginationContainer">
             <div className="SlideCard__pagination">
-              {byDateDesc.map((_, radioIdx) => (
+              {byDateDesc.map((Evt, radioIdx) => (
+                // Utilisation de la date comme clé pour chaque bouton radio, garantissant ainsi des clés uniques
                 <input
-                  key={`${event.id}`}
+                  key={Evt.date}
                   type="radio"
                   name="radio-button"
-                  checked={idx === radioIdx}
+                  checked={index === radioIdx}
+                  readOnly
                 />
               ))}
             </div>
